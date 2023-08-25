@@ -60,7 +60,7 @@ def calc_threshold(N = 30, M = 3000, alpha = 0.05):
     })
     return thr
 
-def check_args(id, t, N):
+def check_args(id, t, N, M, alpha):
     varnames = ['R','F','C','H','H0','cnt']
     if id==t:
         raise ValueError('id and t must be different.')
@@ -69,9 +69,11 @@ def check_args(id, t, N):
     for x in [id, t]:
         if x in varnames:
             raise ValueError(x, 'cannot be names as follows,', str(varnames))
+    if (alpha > 1)or(alpha < 0):
+        raise ValueError('alpha needs to be between 0 - 1.')
 
 def get_RFC(data, id, t, N, M=3000, alpha=0.05):
-    check_args(id=id, t=t, N=N)
+    check_args(id=id, t=t, N=N, M=M, alpha=alpha)
     RFC = get_entropy(data=data, id=id, t=t, N=N).reset_index(drop=False)
     thr = calc_threshold(N = N, M = M, alpha = alpha)
     RFC = pd.merge(RFC, thr, on = 'F', how='inner')
