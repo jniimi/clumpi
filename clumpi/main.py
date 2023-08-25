@@ -72,8 +72,18 @@ def check_args(id, t, N, M, alpha):
     if (alpha > 1)or(alpha < 0):
         raise ValueError('alpha needs to be between 0 - 1.')
 
+def check_data(data, id, t, N):
+    N1 = len(data)
+    N2 = len(data.drop_duplicates([id, t]))
+    if N1 != N2:
+        raise ValueError('There is a duplication. Combination of id & t must be unique.')
+    max_t = data[t].max()
+    if max_t > N:
+        raise ValueError('t must be less than N')
+
 def get_RFC(data, id, t, N, M=3000, alpha=0.05):
     check_args(id=id, t=t, N=N, M=M, alpha=alpha)
+    check_data(data=data, id=id, t=t, N=N)
     RFC = get_entropy(data=data, id=id, t=t, N=N).reset_index(drop=False)
     thr = calc_threshold(N = N, M = M, alpha = alpha)
     RFC = pd.merge(RFC, thr, on = 'F', how='inner')
