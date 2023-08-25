@@ -1,4 +1,4 @@
-# clumpi
+# clumpi [klˈʌmpάɪ]
 ![sample data in pandas DataFrame](images/sample1.png)
 ## Overview
 A simple python package to calculate Clumpiness for RMFC analysis by Zhang, Bradlow & Small (2015).
