@@ -9,13 +9,11 @@ Easy use with `clumpi.get_RFC()`
 - pandas
 - numpy
 
+works well with Google Colab.
+
 ## Installation
 ```bash
 pip install git+https://github.com/jniimi/clumpi.git
-```
-or
-```bash
-pip install clumpi
 ```
 ## Dataset
 Use your time-series event data with ID and time. 
@@ -39,12 +37,18 @@ display(df)
 ![sample data in pandas DataFrame](images/sample2.png)
 
 ## Usage
+### Log to Clumpiness
 Use the function `clumpi.get_RFC()` to calculate. Specify following information for the arguments.
 - `id`: a var name in df indicating user
 - `t`: a var name in df indicating time
 - `N`: total number of events can occur during the period
 - `M` (optional): a number of iterations for the simulation to calculate threshold (3000 for default)
 - `alpha` (optional): significance probability for the test of regularity (0.05 for default)
+
+### Simply Calculate H0
+Use the function `clumpi.calc_threshold()` to calculate upper `alpha` % point in `M` times simulation. 
+
+All you need to specify are `N`, `M`, and `alpha` (See `clumpi.get_RFC`).
 
 # Acknoledgement
 The simulation in this package is based on Appendix B by Zhang et al. (2015).
