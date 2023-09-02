@@ -12,9 +12,16 @@ Easy use with `clumpi.get_RFC()`
 works well with Google Colab.
 
 ## Installation
+Simply use ```pip install``` for install this from PyPI:
 ```bash
 pip install git+https://github.com/jniimi/clumpi.git
 ```
+or you can from Git repo:
+```bash
+pip install git+https://github.com/jniimi/clumpi.git
+```
+(perhaps, git repo version may be newer.)
+
 ## Dataset
 Use your time-series event data with ID and time. 
 - Create DataFrame that records only the point in time when the event occurred in the time series data. 
