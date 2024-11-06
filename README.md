@@ -23,7 +23,7 @@ pip install git+https://github.com/jniimi/clumpi.git
 (perhaps, git repo version may be newer.)
 
 ## Dataset
-Use your time-series event data with ID and time. 
+Use your discrete time-series event data with ID and time. 
 - Create DataFrame that records only the point in time when the event occurred in the time series data. 
 - The name of the variables can be anything.
 
@@ -45,12 +45,12 @@ display(df)
 
 ## Usage
 ### Log to Clumpiness
-Use the function `clumpi.get_RFC()` to calculate. Specify following information for the arguments.
-- `id`: a var name in df indicating user
-- `t`: a var name in df indicating time
-- `N`: total number of events can occur during the period
+Use the function `clumpi.get_RFC()` to calculate. Specify following arguments.
+- `id`: a column name indicating user
+- `t`: a column name indicating discrete time (e.g., a day in a month)
+- `N`: a maximum number of events during the period (e.g., # of days in a month)
 - `M` (optional): a number of iterations for the simulation to calculate threshold (3000 for default)
-- `alpha` (optional): significance probability for the test of regularity (0.05 for default)
+- `alpha` (optional): a significance level for the test of regularity (0.05 for default)
 
 ### Simply Calculate H0
 Use the function `clumpi.calc_threshold()` to calculate upper `alpha` % point in `M` times simulation. 
@@ -64,4 +64,4 @@ Zhang, Y., Bradlow, E. T., & Small, D. S. (2015). Predicting customer value usin
 https://doi.org/10.1287/mksc.2014.0873
 
 # Author
-jniimi ([@JvckAndersen](https://twitter.com/JvckAndersen))
+jniimi ([@JvckAndersen](https://x.com/JvckAndersen))
