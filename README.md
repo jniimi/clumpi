@@ -14,7 +14,7 @@ works well with Google Colab.
 ## Installation
 Simply use ```pip install``` for install this from PyPI:
 ```bash
-pip install git+https://github.com/jniimi/clumpi.git
+pip install clumpi
 ```
 or you can from Git repo:
 ```bash
