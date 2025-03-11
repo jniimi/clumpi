@@ -1,33 +1,34 @@
 import numpy as np
 import pandas as pd
 import random
+import matplotlib.pyplot as plt
 
 def get_entropy(data, id, t, N):
     data = data.sort_values([id, t])
-    data['cnt'] = 1
-    tbl = data.groupby(id)[['cnt']].sum().rename(columns={'cnt':'F'})
-    data['cnt'] = data.groupby(id)['cnt'].cumsum()
+    tbl = data.groupby(id)[t].agg(F='size',max_t='max')
+    tbl['R'] = N - tbl['max_t'] + 1
 
-    tbl['R'] = N - data.groupby(id)[[t]].max() + 1
+    data['prev_t'] = data.groupby(id)[t].shift(1)
 
-    last = data.groupby(id).last().reset_index(drop=False)
-    last['cnt'] = N + 1
-    data = pd.concat([data, last], axis = 0).sort_values([id, 'cnt']).reset_index(drop=True)
-    
-    data['prev_t'] = data[t].shift(1)
-    data['x'] = np.nan
+    # without last
+    data['x'] = np.where(
+        data['prev_t'].isna(), 
+        data[t], # prev_t is nan: First
+        data[t] - data['prev_t'] # prev_t is not nan: not First
+        )
+    # last
+    last_period = pd.DataFrame({
+        id: tbl.index,
+        'x': (N + 1 - tbl['max_t'])
+    })
+    data = pd.concat([data[[id,'t', 'x']], last_period], ignore_index=True)
 
-    data.loc[ data['cnt']==1,   'x' ] = data[t] # First
-    data.loc[ data['cnt']==N+1, 'x' ] = N + 1 - data[t] # Remaining period
-    data.loc[ data['x'].isna(), 'x' ] = data[t] - data['prev_t'] # Otherwise
-    data['x'] = data['x'] / ( N + 1 )
+    data['x'] = data['x'] / (N + 1)
     data['xlogx'] = data['x'] * np.log(data['x'])
 
-    tbl['xlogx'] = data.groupby(id)['xlogx'].sum()
-    tbl['log(n+1)']  = np.log(tbl['F'] + 1)
-    tbl['H'] = 1 + (tbl['xlogx'] / tbl['log(n+1)'])
-
-    return tbl[['R', 'F', 'H']]
+    entropy = data.groupby(id)['xlogx'].sum()
+    tbl['H'] = 1 + (entropy / np.log(tbl['F'] + 1))
+    return tbl[['R','F','H']]
 
 def one_trial_in_M(N, n):
     tt = np.sort(np.random.choice((np.arange(N)+1), size=n, replace=False))
@@ -64,48 +65,62 @@ def check_args(id, t, N, M, alpha):
     varnames = ['R','F','C','H','H0','cnt']
     if id==t:
         raise ValueError('id and t must be different.')
-    if type(N) != int:
-        raise ValueError('N must be an integer value.')
+    if type(N)!=int or type(M)!=int:
+        raise ValueError('N and M must be an integer value.')
     for x in [id, t]:
         if x in varnames:
-            raise ValueError(x, 'cannot be names as follows,', str(varnames))
+            raise ValueError(f'{x} cannot be named same as following variable names (internally used): f{varnames}')
     if (alpha > 1)or(alpha < 0):
-        raise ValueError('alpha needs to be between 0 - 1.')
+        raise ValueError('alpha must be in [0, 1] value.')
 
 def check_data(data, id, t, N):
     N1 = len(data)
     N2 = len(data.drop_duplicates([id, t]))
     if N1 != N2:
         raise ValueError('There is a duplication. Combination of id & t must be unique.')
-    max_t = data[t].max()
-    if max_t > N:
+    if data[t].min() < 1:
+        raise ValueError('t cannot be less than 1')
+    if data[t].max() > N:
         raise ValueError('t must be less than N')
 
-def get_RFC(data, id, t, N, M=3000, alpha=0.05):
+def plot_occurrence(data=d, user_id='user_id', t='t', N=30):
+    user_order = data[user_id].unique()[::-1]
+    user_mapping = {user: idx for idx, user in enumerate(user_order)}
+
+    y = data[user_id].map(user_mapping)
+
+    plt.figure(figsize=(8, 3))
+    plt.scatter(data[t], y, marker='o')
+
+    plt.yticks(range(len(user_order)), user_order)
+    plt.xticks(range(1, N+1))
+    plt.xlabel(t)
+    plt.ylabel(user_id)
+    plt.title('Event Occurrences')
+    plt.grid(axis='y', linestyle='-', alpha=0.5)
+    plt.show()
+
+def get_RFC(data, id, t, N, M=3000, alpha=0.05, plot=False):
     check_args(id=id, t=t, N=N, M=M, alpha=alpha)
     check_data(data=data, id=id, t=t, N=N)
+    if plot:
+        plot_occurrence(data=data, user_id=id, t=t, N=N)
     RFC = get_entropy(data=data, id=id, t=t, N=N).reset_index(drop=False)
     thr = calc_threshold(N = N, M = M, alpha = alpha)
     RFC = pd.merge(RFC, thr, on = 'F', how='inner')
     RFC['C'] = (RFC['H'] > RFC['H0']).astype(int)
     return RFC
 
+def create_one_user_sample(name, ts=[1,2,5]):
+    user_sample = pd.DataFrame({'user_id': [name]*len(ts), 't': ts})
+    return user_sample
+
 def load_sample_data():
-    d1 = pd.DataFrame({
-        'user_id': ['Ava']*18,
-        't':[1,2,4,5,7,8,10,11,13,14,16,18,20,21,23,25,26,28]
-    })
-    d2 = pd.DataFrame({
-        'user_id': ['Chris']*10,
-        't':[i*3+1 for i in range(10)]
-    })
-    d3 = pd.DataFrame({
-        'user_id': ['Jack']*10,
-        't':[i+1 for i in range(9)]+[28]
-    })
-    d4 = pd.DataFrame({
-        'user_id': ['Jane']*4,
-        't':[1, 2, 5, 7]
-    })
-    d = pd.concat([d1, d2, d3, d4], axis = 0)
+    d = []
+    d.append(create_one_user_sample('Ava', ts=[1,2,4,5,7,8,10,11,13,14,16,18,20,21,23,25,26,28]))
+    d.append(create_one_user_sample('Chris', ts=[i*3+1 for i in range(10)]))
+    d.append(create_one_user_sample('Jack', ts=[i+1 for i in range(9)]+[28]))
+    d.append(create_one_user_sample('Jane', ts=[1, 2, 5, 7]))
+    d.append(create_one_user_sample('Smith', ts=[1, 10, 19, 28]))
+    d = pd.concat(d, axis = 0).reset_index(drop=True)
     return d
