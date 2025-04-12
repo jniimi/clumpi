@@ -1,7 +1,7 @@
 # clumpi [klˈʌmpάɪ]
 
 [![PyPI](https://img.shields.io/pypi/v/clumpi.svg)](https://pypi.org/project/clumpi/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15202295.svg)](https://doi.org/10.5281/zenodo.15202295)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15202294.svg)](https://doi.org/10.5281/zenodo.15202294)
 
 ![sample data in pandas DataFrame](images/sample1.png)
 ## Overview
