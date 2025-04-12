@@ -83,7 +83,7 @@ def check_data(data, id, t, N):
     if data[t].max() > N:
         raise ValueError('t must be less than N')
 
-def plot_occurrence(data=d, user_id='user_id', t='t', N=30):
+def plot_occurrence(data, user_id='user_id', t='t', N=30):
     user_order = data[user_id].unique()[::-1]
     user_mapping = {user: idx for idx, user in enumerate(user_order)}
 
