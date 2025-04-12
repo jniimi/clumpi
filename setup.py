@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fp:
 
 setup(
     name='clumpi',
-    version="1.0.0",
+    version="1.0.1",
     description="Calculate Clumpiness index by Zhang, Bradlow and Small (2015)",
     long_description=readme,
     long_description_content_type='text/markdown',
