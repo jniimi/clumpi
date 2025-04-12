@@ -1,4 +1,8 @@
 # clumpi [klˈʌmpάɪ]
+
+[![PyPI](https://img.shields.io/pypi/v/clumpi.svg)](https://pypi.org/project/clumpi/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15202295.svg)](https://doi.org/10.5281/zenodo.15202295)
+
 ![sample data in pandas DataFrame](images/sample1.png)
 ## Overview
 A simple python package to calculate Clumpiness for RMFC analysis by Zhang, Bradlow & Small (2015).
@@ -68,5 +72,16 @@ The simulation in this package is based on Appendix B by Zhang et al. (2015).
 Zhang, Y., Bradlow, E. T., & Small, D. S. (2015). Predicting customer value using clumpiness: From RFM to RFMC. Marketing Science, 34(2), 195-208.
 https://doi.org/10.1287/mksc.2014.0873
 
-# Author
+# Author and Citation
 jniimi ([@JvckAndersen](https://x.com/JvckAndersen))
+
+```
+@misc{niimi2024clumpi,
+  author = {Junichiro Niimi},
+  title = {clumpi: A Python package for calculating Clumpiness in RFMC analysis},
+  year = {2024},
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.15202295},
+  url = {https://github.com/jniimi/clumpi}
+}
+```
